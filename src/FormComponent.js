@@ -55,7 +55,11 @@ const FormComponent = () => {
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log(user)
-        setState({ stage: 'SIGNEDIN', cognito_username: user.username })
+        setState((prevState) => ({
+          ...prevState,
+          stage: 'SIGNEDIN',
+          cognito_username: user.username,
+        }))
         console.log(user.signInUserSession.accessToken.jwtToken)
       })
       .catch(() => {
@@ -73,7 +77,7 @@ const FormComponent = () => {
           name: state.username,
         },
       })
-      setState({ stage: 'VERIFYING' })
+      setState((prevState) => ({ ...prevState, stage: 'VERIFYING' }))
     } catch (error) {
       console.log('error signing up:', error)
     }
@@ -96,12 +100,16 @@ const FormComponent = () => {
       })
       console.log(user)
       //here we should add token to LocalStorage
-      setState({ stage: 'SIGNEDIN', cognito_username: user.username })
+      setState((prevState) => ({
+        ...prevState,
+        stage: 'SIGNEDIN',
+        cognito_username: user.username,
+      }))
     } catch (error) {
       console.log('error signing in', error)
       if (error.code === 'UserNotConfirmedException') {
         await Auth.resendSignUp(state.email)
-        setState({ stage: 'VERIFYING' })
+        setState((prevState) => ({ ...prevState, stage: 'VERIFYING' }))
       }
     }
   }
@@ -151,16 +159,17 @@ const FormComponent = () => {
       .catch((error) => console.log(error))
   }
   const gotoSignUp = () => {
-    setState({ stage: 'SIGNUP' })
+    setState((prevState) => ({ ...prevState, stage: 'SIGNUP' }))
   }
   const gotoSignIn = () => {
-    setState({ stage: 'SIGNIN' })
+    setState((prevState) => ({ ...prevState, stage: 'SIGNIN' }))
   }
   const gotoPasswordRest = () => {
-    setState({ stage: 'FORGOT' })
+    setState((prevState) => ({ ...prevState, stage: 'FORGOT' }))
   }
   const handleEmailChange = (e) => {
-    setState({ email: e.target.value })
+    const { name, value } = e.target
+    setState((prevState) => ({ ...prevState, email: value }))
   }
   const handlePasswordChange = (e) => {
     setState({ password: e.target.value })
