@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Amplify, { Auth } from 'aws-amplify'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import ChangePsw from './pages/ChangePsw'
 
 // ES Modules, e.g. transpiling with Babel
 
@@ -168,24 +171,31 @@ const FormComponent = () => {
     setState((prevState) => ({ ...prevState, stage: 'FORGOT' }))
   }
   const handleEmailChange = (e) => {
-    const { name, value } = e.target
+    const { value } = e.target
     setState((prevState) => ({ ...prevState, email: value }))
   }
   const handlePasswordChange = (e) => {
-    setState({ password: e.target.value })
+    const { value } = e.target
+    setState((prevState) => ({ ...prevState, password: value }))
   }
   const handleNewPasswordChange = (e) => {
-    setState({ new_password: e.target.value })
+    const { value } = e.target
+    setState((prevState) => ({ ...prevState, new_password: value }))
   }
   const handleCodeChange = (e) => {
-    setState({ code: e.target.value })
+    const { value } = e.target
+    setState((prevState) => ({ ...prevState, code: value }))
   }
   const handleUserNameChange = (e) => {
-    setState({ username: e.target.value })
+    const { value } = e.target
+    setState((prevState) => ({ ...prevState, username: value }))
   }
 
   return (
     <div className="ui container">
+      {/* <Login /> */}
+      {/* <Register /> */}
+      {/* <ChangePsw /> */}
       <h1 className="ui header">Cognito Auth</h1>
       <div className="ui placeholder segment">
         <div
@@ -202,7 +212,11 @@ const FormComponent = () => {
               <div className="field">
                 <label>Old Password</label>
                 <div className="ui left icon input">
-                  <input type="password" onChange={handlePasswordChange} />
+                  <input
+                    type="password"
+                    value={state.password || ''}
+                    onChange={handlePasswordChange}
+                  />
                   <i className="lock icon"></i>
                 </div>
               </div>
