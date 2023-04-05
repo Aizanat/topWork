@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Amplify, { Auth } from 'aws-amplify'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import ChangePsw from './pages/ChangePsw'
-import SocialMediaAuth from './pages/SocialMediaAuth'
-import VerficationCode from './pages/VerificationCode'
+
+// ES Modules, e.g. transpiling with Babel
 
 const USER_POOL_ID = 'us-east-1_Dw1zhzA7F'
 const USER_POOL_WEB_CLIENT_ID = '10l0p0blh550oasf9orjbbaoe1'
@@ -12,6 +9,7 @@ const REGION = 'us-east-1'
 const COOKIE_DOMAIN = 'localhost'
 const OAUTH_DOMAIN = 'users-list.auth.us-east-1.amazoncognito.com'
 
+// For more options, check out this link https://docs.amplify.aws/lib/auth/start/q/platform/js#re-use-existing-authentication-resource
 Amplify.configure({
   Auth: {
     authenticationFlowType: 'USER_SRP_AUTH',
@@ -19,12 +17,20 @@ Amplify.configure({
     userPoolId: USER_POOL_ID,
     userPoolWebClientId: USER_POOL_WEB_CLIENT_ID,
     mandatorySignIn: false,
+    // OPTIONAL - Configuration for cookie storage
+    // Note: if the secure flag is set to true, then the cookie transmission requires a secure protocol
     cookieStorage: {
+      // REQUIRED - Cookie domain (only required if cookieStorage is provided)
       domain: COOKIE_DOMAIN,
+      // OPTIONAL - Cookie path
       path: '/',
+      // OPTIONAL - Cookie expiration in days
       expires: 365,
+      // OPTIONAL - Cookie secure flag
+      // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
       secure: false,
     },
+
     oauth: {
       domain: OAUTH_DOMAIN,
       scope: ['email', 'openid', 'profile'],
@@ -35,7 +41,7 @@ Amplify.configure({
   },
 })
 
-const FormComponent = () => {
+const See = () => {
   const [state, setState] = useState({
     username: '',
     email: '',
@@ -45,7 +51,6 @@ const FormComponent = () => {
     stage: 'SIGNIN',
     cognito_username: '',
   })
-
   useEffect(() => {
     Auth.currentAuthenticatedUser()
       .then((user) => {
@@ -68,7 +73,7 @@ const FormComponent = () => {
         username: state.email,
         password: state.password,
         attributes: {
-          email: state.email,
+          email: state.email, // optional
           name: state.username,
         },
       })
@@ -94,6 +99,7 @@ const FormComponent = () => {
         password: state.password,
       })
       console.log(user)
+      //here we should add token to LocalStorage
       setState((prevState) => ({
         ...prevState,
         stage: 'SIGNEDIN',
@@ -114,12 +120,12 @@ const FormComponent = () => {
     let code = state.code
     try {
       await Auth.confirmSignUp(username, code)
+      //바로로그인?
       signIn()
     } catch (error) {
       console.log('error confirming sign up', error)
     }
   }
-
   const changePassword = async () => {
     Auth.currentAuthenticatedUser()
       .then((user) => {
@@ -128,7 +134,6 @@ const FormComponent = () => {
       .then((data) => console.log(data))
       .catch((error) => console.log(error))
   }
-
   const changePasswordForgot = async () => {
     Auth.forgotPasswordSubmit(state.email, state.code, state.new_password)
       .then((data) => {
@@ -138,7 +143,6 @@ const FormComponent = () => {
         console.log('err', error)
       })
   }
-
   const resendCode = async () => {
     try {
       await Auth.resendSignUp(state.email)
@@ -147,7 +151,6 @@ const FormComponent = () => {
       console.log('error resending code: ', error)
     }
   }
-
   const sendCode = async () => {
     Auth.forgotPassword(state.email)
       .then((data) => {
@@ -155,7 +158,6 @@ const FormComponent = () => {
       })
       .catch((error) => console.log(error))
   }
-
   const gotoSignUp = () => {
     setState((prevState) => ({ ...prevState, stage: 'SIGNUP' }))
   }
@@ -212,6 +214,13 @@ const FormComponent = () => {
                   <i className="lock icon"></i>
                 </div>
               </div>
+              <div className="field">
+                <label>New Password</label>
+                <div className="ui left icon input">
+                  <input type="password" onChange={handleNewPasswordChange} />
+                  <i className="lock icon"></i>
+                </div>
+              </div>
               <div className="ui blue submit button" onClick={changePassword}>
                 Change Password
               </div>
@@ -222,6 +231,7 @@ const FormComponent = () => {
             </div>
           </div>
         </div>
+
         <div
           className="ui two column very relaxed stackable grid"
           style={{
@@ -232,45 +242,153 @@ const FormComponent = () => {
             <div
               className="ui form"
               style={{
+                display: state.stage === 'VERIFYING' ? 'block' : 'none',
+              }}
+            >
+              <div className="field">
+                <label>Verfication Code</label>
+                <div className="ui left icon input">
+                  <input
+                    type="text"
+                    placeholder="111111"
+                    value={state.code || ''}
+                    onChange={handleCodeChange}
+                  />
+                  <i className="key icon"></i>
+                </div>
+              </div>
+              <div className="ui blue submit button" onClick={confirm}>
+                Confirm Account
+              </div>
+              <p className="ui center aligned segment">
+                Didn't receive a code?{' '}
+                <a href="#" onClick={resendCode}>
+                  Resend it
+                </a>
+              </p>
+            </div>
+            <div
+              className="ui form"
+              style={{
+                display: state.stage === 'FORGOT' ? 'block' : 'none',
+              }}
+            >
+              <div className="field">
+                <label>Email</label>
+                <div className="ui left icon input">
+                  <input
+                    type="text"
+                    placeholder="Email"
+                    value={state.email || ''}
+                    onChange={handleEmailChange}
+                  />
+                  <i className="mail icon"></i>
+                </div>
+              </div>
+              <div className="ui blue submit button" onClick={sendCode}>
+                {' '}
+                Send Email
+              </div>
+              <br />
+              <div className="field">
+                <label>Verfication Code</label>
+                <div className="ui left icon input">
+                  <input
+                    type="text"
+                    placeholder="111111"
+                    value={state.code || ''}
+                    onChange={handleCodeChange}
+                  />
+                  <i className="key icon"></i>
+                </div>
+              </div>
+              <div className="field">
+                <label>New Password</label>
+                <div className="ui left icon input">
+                  <input type="password" onChange={handleNewPasswordChange} />
+                  <i className="lock icon"></i>
+                </div>
+              </div>
+              <div
+                className="ui blue submit button"
+                onClick={changePasswordForgot}
+              >
+                {' '}
+                Change Password
+              </div>
+            </div>
+            <div
+              className="ui form"
+              style={{
                 display:
                   state.stage === 'SIGNIN' || state.stage === 'SIGNUP'
                     ? 'block'
                     : 'none',
               }}
             >
-              <VerficationCode
-                confirm={confirm}
-                resendCode={resendCode}
-                handleCodeChange={handleCodeChange}
-                visible={state.stage === 'VERIFYING'}
-                codeValue={state.code || ''}
-              />
-              <ChangePsw
-                sendCode={sendCode}
-                changePasswordForgot={changePasswordForgot}
-                handleNewPasswordChange={handleNewPasswordChange}
-                handleEmailChange={handleEmailChange}
-                handleCodeChange={handleCodeChange}
-                visible={state.stage === 'FORGOT'}
-                emailValue={state.email || ''}
-                codeValue={state.code || ''}
-              />
-              <Register
-                signUp={signUp}
-                handleUserNameChange={handleUserNameChange}
-                handleEmailChange={handleEmailChange}
-                handlePasswordChange={handlePasswordChange}
-                visible={state.stage === 'SIGNUP'}
-                emailValue={state.email || ''}
-              />
-              <Login signIn={signIn} visible={state.stage === 'SIGNIN'} />
+              <div
+                className="field"
+                style={{
+                  display: state.stage === 'SIGNUP' ? 'block' : 'none',
+                }}
+              >
+                <label>Name</label>
+                <div className="ui left icon input">
+                  <input
+                    type="text"
+                    placeholder="John Behr"
+                    value={state.username || ''}
+                    onChange={handleUserNameChange}
+                  />
+                  <i className="user icon"></i>
+                </div>
+              </div>
+              <div className="field">
+                <label>Email</label>
+                <div className="ui left icon input">
+                  <input
+                    type="text"
+                    placeholder="Email"
+                    value={state.email || ''}
+                    onChange={handleEmailChange}
+                  />
+                  <i className="mail icon"></i>
+                </div>
+              </div>
+              <div className="field">
+                <label>Password</label>
+                <div className="ui left icon input">
+                  <input type="password" onChange={handlePasswordChange} />
+                  <i className="lock icon"></i>
+                </div>
+              </div>
+
+              <div
+                className="ui blue submit button"
+                onClick={signIn}
+                style={{
+                  display: state.stage === 'SIGNIN' ? 'block' : 'none',
+                }}
+              >
+                Sign In
+              </div>
+              <div
+                className="ui blue submit button"
+                onClick={signUp}
+                style={{
+                  display: state.stage === 'SIGNUP' ? 'block' : 'none',
+                }}
+              >
+                Sign Up
+              </div>
+
               <p
                 className="ui center aligned segment"
                 style={{
                   display: state.stage === 'SIGNIN' ? 'block' : 'none',
                 }}
               >
-                Don't have an account?
+                Don't have an account?{' '}
                 <a href="#" onClick={gotoSignUp}>
                   Sign Up
                 </a>
@@ -291,15 +409,25 @@ const FormComponent = () => {
                   display: state.stage === 'SIGNUP' ? 'block' : 'none',
                 }}
               >
-                Already have an account?
+                Already have an account?{' '}
                 <a href="#" onClick={gotoSignIn}>
                   Sign In
-                </a>
+                </a>{' '}
               </p>
             </div>
           </div>
-          <SocialMediaAuth />
+          <div className="middle aligned column">
+            <div className="App">
+              <button
+                className="ui google plus button"
+                onClick={() => Auth.federatedSignIn({ provider: 'Google' })}
+              >
+                Continue with Google <i className="google plus icon"></i>
+              </button>
+            </div>
+          </div>
         </div>
+
         <div
           className="ui vertical divider"
           style={{
@@ -313,4 +441,4 @@ const FormComponent = () => {
   )
 }
 
-export default FormComponent
+export default See
