@@ -1,16 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import FormComponent from './FormComponent'
-import See from './See'
+import { BrowserRouter } from 'react-router-dom'
 
-class App extends React.Component {
-  render() {
-    return (
-      <div className="ui masthead vertical segment">
-        <FormComponent />
-      </div>
-    )
-  }
-}
+import App from './App'
 
-ReactDOM.render(<App />, document.querySelector('#root'))
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.querySelector('#root')
+)

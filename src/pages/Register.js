@@ -14,24 +14,24 @@ const Register = (props) => {
           <input type="name" onChange={props.handleUserNameChange} />
           <i className="user icon"></i>
         </div>
-      </div>
-      <div className="field">
-        <label>Email</label>
-        <div className="ui left icon input">
-          <input
-            type="text"
-            placeholder="Email"
-            value={props.emailValue}
-            onChange={props.handleEmailChange}
-          />
-          <i className="mail icon"></i>
+        <div className="field">
+          <label>Email</label>
+          <div className="ui left icon input">
+            <input
+              type="text"
+              placeholder="Email"
+              value={props.emailValue}
+              onChange={props.handleEmailChange}
+            />
+            <i className="mail icon"></i>
+          </div>
         </div>
-      </div>
-      <div className="field">
-        <label>Password</label>
-        <div className="ui left icon input">
-          <input type="password" onChange={props.handlePasswordChange} />
-          <i className="lock icon"></i>
+        <div className="field">
+          <label>Password</label>
+          <div className="ui left icon input">
+            <input type="password" onChange={props.handlePasswordChange} />
+            <i className="lock icon"></i>
+          </div>
         </div>
       </div>
       <div

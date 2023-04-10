@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import Amplify, { Auth } from 'aws-amplify'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -232,10 +233,7 @@ const FormComponent = () => {
             <div
               className="ui form"
               style={{
-                display:
-                  state.stage === 'SIGNIN' || state.stage === 'SIGNUP'
-                    ? 'block'
-                    : 'none',
+                display: state.stage === 'SIGNIN' || state.stage === 'SIGNUP',
               }}
             >
               <VerficationCode
@@ -263,7 +261,13 @@ const FormComponent = () => {
                 visible={state.stage === 'SIGNUP'}
                 emailValue={state.email || ''}
               />
-              <Login signIn={signIn} visible={state.stage === 'SIGNIN'} />
+              <Login
+                signIn={signIn}
+                handleEmailChange={handleEmailChange}
+                handlePasswordChange={handlePasswordChange}
+                visible={state.stage === 'SIGNIN'}
+                emailValue={state.email || ''}
+              />
               <p
                 className="ui center aligned segment"
                 style={{
@@ -271,9 +275,9 @@ const FormComponent = () => {
                 }}
               >
                 Don't have an account?
-                <a href="#" onClick={gotoSignUp}>
+                <Link to="/register" onClick={gotoSignUp}>
                   Sign Up
-                </a>
+                </Link>
               </p>
               <p
                 className="ui center aligned segment"
@@ -281,9 +285,9 @@ const FormComponent = () => {
                   display: state.stage === 'SIGNIN' ? 'block' : 'none',
                 }}
               >
-                <a href="#" onClick={gotoPasswordRest}>
+                <Link to="/changePsw" onClick={gotoPasswordRest}>
                   Forgot your password?
-                </a>
+                </Link>
               </p>
               <p
                 className="ui center aligned segment"
@@ -292,13 +296,15 @@ const FormComponent = () => {
                 }}
               >
                 Already have an account?
-                <a href="#" onClick={gotoSignIn}>
+                <Link to="/" onClick={gotoSignIn}>
                   Sign In
-                </a>
+                </Link>
               </p>
             </div>
           </div>
-          <SocialMediaAuth />
+          <Link to="/socialMedia">
+            <SocialMediaAuth />
+          </Link>
         </div>
         <div
           className="ui vertical divider"
