@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 
 const Login = (props) => {
   return (
@@ -38,7 +37,7 @@ const Login = (props) => {
           display: props.visible ? 'block' : 'none',
         }}
       >
-        <Link to="/signIn">Sign In</Link>
+        Sign In
       </div>
     </>
   )

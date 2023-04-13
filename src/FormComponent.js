@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import Amplify, { Auth } from 'aws-amplify'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -275,9 +274,9 @@ const FormComponent = () => {
                 }}
               >
                 Don't have an account?
-                <Link to="/register" onClick={gotoSignUp}>
+                <a href="#" onClick={gotoSignUp}>
                   Sign Up
-                </Link>
+                </a>
               </p>
               <p
                 className="ui center aligned segment"
@@ -285,9 +284,9 @@ const FormComponent = () => {
                   display: state.stage === 'SIGNIN' ? 'block' : 'none',
                 }}
               >
-                <Link to="/changePsw" onClick={gotoPasswordRest}>
+                <a href="#" onClick={gotoPasswordRest}>
                   Forgot your password?
-                </Link>
+                </a>
               </p>
               <p
                 className="ui center aligned segment"
@@ -296,15 +295,14 @@ const FormComponent = () => {
                 }}
               >
                 Already have an account?
-                <Link to="/" onClick={gotoSignIn}>
+                <a href="#" onClick={gotoSignIn}>
                   Sign In
-                </Link>
+                </a>
               </p>
             </div>
           </div>
-          <Link to="/socialMedia">
-            <SocialMediaAuth />
-          </Link>
+
+          <SocialMediaAuth />
         </div>
         <div
           className="ui vertical divider"
